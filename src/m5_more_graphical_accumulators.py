@@ -27,8 +27,8 @@ import rosegraphics as rg
 # -----------------------------------------------------------------------------
 def main():
     """ Calls the   TEST   functions in this module. """
-    # run_test_draw_squares_from_circle()
-    # run_test_draw_circles_from_rectangle()
+    run_test_draw_squares_from_circle()
+    run_test_draw_circles_from_rectangle()
     run_test_draw_lines_from_rectangles()
 
 
@@ -212,7 +212,7 @@ def draw_circles_from_rectangle(m, n, rectangle, window):
       :type window: rg.RoseWindow
     """
     # -------------------------------------------------------------------------
-    # TODO: 4. Implement and test this function.
+    # Done: 4. Implement and test this function.
     #          Tests have been written for you (above).
     #
     # CONSIDER using the ACCUMULATOR IN GRAPHICS pattern,
@@ -226,24 +226,33 @@ def draw_circles_from_rectangle(m, n, rectangle, window):
     ###########################################################################
     # -------------------------------------------------------------------------
     rectangle.attach_to(window)
-    radius1 = 0.5 * rectangle.get_height()
-    radius2 = 0.5 * rectangle.get_width()
-    reccenterx = rectangle.get_center().x
-    reccentery = rectangle.get_center().y
-    x = reccenterx - ((0.5 * rectangle.get_width()) - (0.5 * rectangle.get_height()))
-    y = reccentery - ((0.5 * rectangle.get_height()) - (0.5 * rectangle.get_width()))
+    color1 = rectangle.outline_color
+    color2 = rectangle.fill_color
+    x1 = rectangle.get_upper_left_corner().x
+    x2 = rectangle.get_lower_left_corner().x
+    y1 = rectangle.get_upper_left_corner().y
+    y2 = rectangle.get_lower_left_corner().y
+    radius1 = (y1-y2)*0.5
 
     for k in range(m):
-        circle = rg.Circle(rg.Point(x - (2 * radius1) * k, reccentery), radius1)
-        circle.fill_color = rectangle.outline_color
+
+        circle = rg.Circle(rg.Point((((x2+x1)*0.5) + radius1) + (k*(2*radius1)), (y2+y1)*0.5), radius1)
+        circle.fill_color = color2
         circle.attach_to(window)
-        window.render()
+
+    x1 = rectangle.get_upper_left_corner().x
+    y1 = rectangle.get_lower_left_corner().y
+    x3 = rectangle.get_upper_left_corner().x
+    y3 = rectangle.get_lower_left_corner().y
+    radius2 = (x3 - x1) * 0.5
 
     for k in range(n):
-        circle = rg.Circle(rg.Point(reccenterx, y - (2 * radius2 * k)), radius2)
-        circle.outline_color = rectangle.fill_color
-        circle.attach_to(window)
-        window.render()
+
+        circle1 = rg.Circle(rg.Point((x3+x1)*0.5, (((y3+y1)*0.5)-radius2)-(k*(2*radius2))), radius2)
+        circle1.outline_color = color1
+        circle1.attach_to(window)
+
+    window.render()
 
 
 def run_test_draw_lines_from_rectangles():
@@ -338,14 +347,21 @@ def draw_lines_from_rectangles(rectangle1, rectangle2, n, window):
     # -------------------------------------------------------------------------
     rectangle1.attach_to(window)
     rectangle2.attach_to(window)
-
-    line1 = rg.Line(rg.Point(rectangle1.get_center().x, rectangle1.get_center().y),
-                        rg.Point(rectangle2.get_center().x, rectangle2.get_center().y))
+    color1 = rectangle1.outline_color
+    color2 = rectangle2.outline_color
+    start1x = rectangle1.get_center().x
+    start1y = rectangle1.get_center().y
+    endx = rectangle2.get_center().x
+    endy = rectangle2.get_center().y
     w = rectangle1.get_width() / 2
-    z = rectangle1.get_height() / 2
+    h = rectangle1.get_height() / 2
     for k in range(n):
+        line1 = rg.Line(rg.Point(start1x - (k*w), start1y + (k*h)), rg.Point(endx - (k*w), endy + (k*h)))
+        if k % 2 == 0:
+            line1.color = color1
+        if k % 2 == 1:
+            line1.color = color2
         line1.attach_to(window)
-        line1 = rg.Line(rg.Point(line1.start.x - w, line1.start.y + z), rg.Point(line1.end.x - w, line1.end.y + z))
     window.render()
 
 # -----------------------------------------------------------------------------
